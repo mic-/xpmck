@@ -1,13 +1,17 @@
 include globals.e
 include output.e
-include specs_pokey.e
+include specs_2a03.e
+include specs_n106.e
+include specs_vrc6.e
 include util.e
 
 
-global procedure init_at8()
-	define("AT8", 1)
+global procedure init_nes()
+	define("NES", 1)
 
-	set_channel_specs(specs_pokey, 1, 1)	-- A,B,C,D
+	set_channel_specs(specs_2a03, 1, 1)	-- A,B,C,D,E
+	set_channel_specs(specs_vrc6, 1, 6)	-- F,G,H
+	set_channel_specs(specs_n106, 1, 9)	-- I,J,K,L,M,N
 
 	activeChannels 	= repeat(0, length(supportedChannels))
 	
@@ -15,13 +19,19 @@ global procedure init_at8()
 	minVolume 		= 0
 	supportsPan 	= 1
 	maxLoopDepth 	= 2
-	supportsPAL		= 0
-	updateFreq		= 50.0		-- Use PAL as default	
+	minWavLength	= 8
+	maxWavLength	= 32
+	minWavSample 	= 0
+	maxWavSample	= 15
+
+	supportsPAL		= 1
+	updateFreq		= 60.0		-- Use NTSC as default
+	
 end procedure
 
 
--- Output data suitable for the Atari 8-bit (400/800/XE/XL) playback library (WLA-DX)
-global procedure output_at8(sequence args)
+-- Output data suitable for the NES playback library (asm6)
+global procedure output_nes(sequence args)
 	atom factor
 	integer f, machineSpeed, tableSize, cbSize, patSize, songSize, numSongs, saphdr
 	sequence freqTbl, oct1, fileEnding, s
@@ -40,23 +50,9 @@ global procedure output_at8(sequence args)
 		ERROR("Unable to open file: " & shortFilename & fileEnding, -1)
 	end if
 
-	saphdr = open("sapheader.txt", "wb")
-	
 	s = date()
 	printf(outFile, "; Written by XPMC at %02d:%02d:%02d on " & WEEKDAYS[s[7]] & " " & MONTHS[s[2]] & " %d, %d." & {13, 10, 13, 10},
 	       s[4..6] & {s[3], s[1] + 1900})
-
-	printf(saphdr, "SAP" & CRLF &
-		"AUTHOR \""&songProgrammer&"\"" & CRLF &
-		"NAME \""&songTitle&"\"" & CRLF &
-		"DATE \"%d\"" & CRLF &
-		"SONGS %d" & CRLF &
-		"DEFSONG 0" & CRLF &
-		"TYPE B" & CRLF &
-		"INIT 2000" & CRLF &
-		"PLAYER 2011" & CRLF, {s[1] + 1900, numSongs})
-	close(saphdr)
-
 
 	if length(songTitle) >= 32 then
 		puts(outFile, ".db \"" & songTitle[1..31] & "\", 0" & CRLF)
@@ -77,7 +73,7 @@ global procedure output_at8(sequence args)
 		puts(outFile, CRLF)
 	end if
 	
-	puts(outFile, ".DEFINE XPMP_AT8" & CRLF)
+	puts(outFile, ".DEFINE XPMP_NES" & CRLF)
 	
 
 		if sum(assoc_get_references(volumeMacros)) = 0 then --not length(volumeMacros[1]) then
@@ -110,7 +106,6 @@ global procedure output_at8(sequence args)
 		tableSize += output_wla_table("xpmp_EP_mac", pitchMacros,  1, 1, #80)
 		tableSize += output_wla_table("xpmp_EN_mac", arpeggios,    1, 1, #80)
 		tableSize += output_wla_table("xpmp_MP_mac", vibratos,     0, 1, #80)
-		tableSize += output_wla_table("xpmp_CS_mac", panMacros,    1, 1, #80)
 
 		if verbose then
 			printf(1, "Size of effect tables: %d bytes\n", tableSize)
@@ -196,4 +191,4 @@ global procedure output_at8(sequence args)
 end procedure
 
 
-add_target(TARGET_AT8, "at8", routine_id("init_at8"), routine_id("output_at8"))
+add_target(TARGET_NES, "nes", routine_id("init_nes"), routine_id("output_nes"))

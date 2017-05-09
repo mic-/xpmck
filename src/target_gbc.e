@@ -7,11 +7,11 @@ include util.e
 global procedure init_gbc()
 	define("GBC", 1)
 
-	set_channel_specs(specs_gbapu, 1, 1)
+	set_channel_specs(specs_gbapu, 1, 1)	-- A,B,C,D
 
 	activeChannels 		= repeat(0, length(supportedChannels))
-	maxTempo 		= 300
-	minVolume 		= 0
+	maxTempo 			= 300
+	minVolume 			= 0
 	supportsPan 		= 1
 	maxLoopDepth 		= 2
 	minWavLength		= 32

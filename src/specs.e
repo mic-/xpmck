@@ -32,7 +32,10 @@ global constant
 	TYPE_YMF292	= 11,
 	TYPE_SPC	= 12,
 	TYPE_GBAPU	= 13,
-	TYPE_HUC6280=14
+	TYPE_HUC6280= 14,
+	TYPE_2A03	= 15,
+	TYPE_VRC6	= 16,
+	TYPE_N106	= 17
 	
 
 global procedure set_channel_specs(sequence specs, integer firstPhysChan, integer firstLogicalChan)

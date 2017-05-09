@@ -8,7 +8,7 @@ global procedure init_pce()
 	define("PCE", 1)
 	define("TGX", 1)
 
-	set_channel_specs(specs_huc6280, 1, 1)
+	set_channel_specs(specs_huc6280, 1, 1)	-- A,B,C,D,E,F
 
 	activeChannels 		= repeat(0, length(supportedChannels))
 	maxTempo 			= 300

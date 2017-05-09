@@ -9,8 +9,8 @@ include vgm.e
 global procedure init_sms()
 	define("SMS", 1)       
 	
-	set_channel_specs(specs_sn76489, 1, 1)
-	set_channel_specs(specs_ym2413,  1, 5)
+	set_channel_specs(specs_sn76489, 1, 1)	-- A,B,C,D
+	set_channel_specs(specs_ym2413,  1, 5)	-- E,F,G,H,I,J,K,L,M
 	
 	activeChannels 		= repeat(0, length(supportedChannels))	
 	maxTempo 		= 300

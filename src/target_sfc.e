@@ -20,6 +20,8 @@ global procedure init_sfc()
 	maxWavLength		= 16384
 	minWavSample 		= 0
 	maxWavSample		= 31
+	adsrLen				= 4
+	adsrMax				= 31
 	--updateFreq			= 50.0		-- Use PAL as default	
 end procedure
 
@@ -34,6 +36,17 @@ global procedure output_sfc(sequence args)
 		ERROR("Unable to open file: " & shortFilename & ".asm", -1)
 	end if
 
+	-- Convert ADSR envelopes to the format used by the S-DSP
+	for i = 1 to length(adsrs[2]) do
+		s = {0, 0}
+		e = adsrs[2][i][2]
+		--s[1] = xor_bits(e[1], 15) * #10 + xor_bits(e[2], 15)
+		--s[2] = e[3] * #10 + xor_bits(e[4], 15)
+		s[1] = and_bits(e[1], 15) + and_bits(e[2], 7)*#10 + #80
+		s[2] = and_bits(e[4], 31) + and_bits(e[3], 7)*#20
+		adsrs[2][i][2] = s
+	end for
+	
 	s = date()
 	printf(outFile, "; Written by XPMC at %02d:%02d:%02d on " & WEEKDAYS[s[7]] & " " & MONTHS[s[2]] & " %d, %d." & {13, 10, 13, 10},
 	       s[4..6] & {s[3], s[1] + 1900})

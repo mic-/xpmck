@@ -1237,6 +1237,7 @@ global procedure write_vgm(sequence fname, integer song, integer psg, integer ym
 									                  songs[channel[i][1]][i][channel[i][CHN_DATAPOS] + 2] * #100
 							end if		                  
 							channelLooped[i] = 1
+							--printf(1, "channel %d looped\n", i)
 							if sum(channelLooped) = nChannels then
 								loopPos = cmdPos[i][channel[i][CHN_DATAPOS] + 1]
 								channelDone = repeat(1, nChannels)
@@ -1383,6 +1384,7 @@ global procedure write_vgm(sequence fname, integer song, integer psg, integer ym
 					end if
 					if channel[i][4] = CMD_END then
 						channelDone[i] = 1
+						--printf(1, "channel %d ended\n", i)
 						channelLooped[i] = 1
 					end if
 				else	
@@ -1402,9 +1404,11 @@ global procedure write_vgm(sequence fname, integer song, integer psg, integer ym
 							elsif channel[i][8] < #001C then
 								channel[i][8] = #001C
 							end if
+							--printf(1, "VGM: note=%d. %d, %d\n", {channel[i][CHN_NOTE],channel[i][8], lastChannelSetting[i][1]})
 							if channel[i][8] != lastChannelSetting[i][1] then
 								vgmData &= {#50, or_bits(#80 + (i - 1) * #20, and_bits(channel[i][8], #0F))}
 								vgmData &= {#50, floor(and_bits(channel[i][8], #3F0) / #10)}
+								--printf(1, "VGM: %02x %02x %02x %02x\n", {#50, or_bits(#80 + (i - 1) * #20, and_bits(channel[i][8], #0F)), #50,  floor(and_bits(channel[i][8], #3F0) / #10)})
 								lastChannelSetting[i][1] = channel[i][8]
 							end if
 						elsif i = 4 and psg then

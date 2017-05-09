@@ -9,7 +9,7 @@ global constant specs_ym2151 = {
 	{  0,   0,   0,   0,   0,   0,   0,   0},	-- Supports filter
 	{  0,   0,   0,   0,   0,   0,   0,   0},	-- Supports ring modulation
 	{  0,   0,   0,   0,   0,   0,   0,   0},	-- Supports WT
-	{  0,   0,   0,   0,   0,   0,   0,   0},
+	{  0,   0,   0,   0,   0,   0,   0,   0},	-- Supports XPCM
 	{  0,   0,   0,   0,   0,   0,   0,   0},
 	{  0,   0,   0,   0,   0,   0,   0,   0},
 	{  1,   1,   1,   1,   1,   1,   1,   1},

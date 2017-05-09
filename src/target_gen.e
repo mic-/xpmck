@@ -10,8 +10,8 @@ global procedure init_gen()
 	define("GEN", 1)
 	define("SMD", 1)
 	
-	set_channel_specs(specs_sn76489, 1, 1)
-	set_channel_specs(specs_ym2612,  1, 5)
+	set_channel_specs(specs_sn76489, 1, 1)	-- A,B,C,D
+	set_channel_specs(specs_ym2612,  1, 5)	-- E,F,G,H,I,J
 
 	activeChannels 		= repeat(0, length(supportedChannels))
 

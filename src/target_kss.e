@@ -11,22 +11,22 @@ include util.e
 global procedure init_kss()
 	define("KSS", 1)
 	
-	set_channel_specs(specs_sn76489,    1,  1)
-	set_channel_specs(specs_ay_3_8910,  1,  5)
-	set_channel_specs(specs_scc,        1,  8)
-	set_channel_specs(specs_ym2151,     1, 13)
+	set_channel_specs(specs_sn76489,    1,  1)	-- A,B,C,D
+	set_channel_specs(specs_ay_3_8910,  1,  5)	-- E,F,G
+	set_channel_specs(specs_scc,        1,  8)	-- H,I,J,K,L
+	set_channel_specs(specs_ym2151,     1, 13)	-- M,N,O,P,Q,R,S,T
 	
-	activeChannels 		= repeat(0, length(supportedChannels))	
+	activeChannels 	= repeat(0, length(supportedChannels))	
 	maxTempo 		= 300
 	minVolume 		= 0
-	supportsPan 		= 1
-	maxLoopDepth 		= 2
- 	  adsrLen			= 5
+	supportsPan 	= 1
+	maxLoopDepth 	= 2
+ 	adsrLen			= 5
 	adsrMax			= 63
-	minWavLength		= 32
-	maxWavLength		= 32
-	minWavSample 		= -128
-	maxWavSample		= 127
+	minWavLength	= 32
+	maxWavLength	= 32
+	minWavSample 	= -128
+	maxWavSample	= 127
 end procedure
 
 
