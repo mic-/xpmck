@@ -109,7 +109,7 @@
 ; 60 bytes
 .STRUCT xpmp_channel_t
 dataPtr		dw
-dataPos		dw
+dataPos		dw	;+2
 delay		dw
 delayHi		db	;+6
 note		db	;+7
@@ -2313,6 +2313,7 @@ xpmp_ay_cmd_90:
 
 	; Envelope speed
 	xpmp_ay_cmd_90_hwes:
+	ld	hl,(xpmp_tempw)
 	ld	e,(ix+2)
 	ld	d,(ix+3)
 	inc	de
@@ -2353,6 +2354,7 @@ xpmp_ay_cmd_90:
 
 	; Noise speed (inverted period)
 	xpmp_ay_cmd_90_hwns:
+	ld	hl,(xpmp_tempw)
 	ld	e,(ix+2)
 	ld	d,(ix+3)
 	inc	de
