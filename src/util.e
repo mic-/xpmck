@@ -2,130 +2,134 @@
 
 include globals.e
 
+export procedure LOGIF(integer condition, sequence fmt, object args = {})
+    if condition then
+        printf(1, fmt, args)
+    end if
+end procedure
 
 -- Output an error message and abort execution
 global procedure ERROR(sequence msg, integer line)
-	if line = -1 then
-		puts(1, shortFilename & ", Error: " & msg & "\n")
-	else
-		printf(1, shortFilename & "@%d, Error: " & msg & "\n", line)
-	end if
-	--while get_key() = -1 do end while
-	abort(0)
+    if line = -1 then
+        puts(1, shortFilename & ", Error: " & msg & "\n")
+    else
+        printf(1, shortFilename & "@%d, Error: " & msg & "\n", line)
+    end if
+    --while get_key() = -1 do end while
+    abort(0)
 end procedure
 
 
 -- Output a warning message
 global procedure WARNING(sequence msg, integer line)
-	if warningsAreErrors then
-		ERROR(msg, line)
-	else
-		if line = -1 then
-			puts(1, shortFilename & ", Warning: " & msg & "\n")
-		else
-			printf(1, shortFilename & "@%d, Warning: " & msg & "\n", line)
-		end if
-	end if
+    if warningsAreErrors then
+        ERROR(msg, line)
+    else
+        if line = -1 then
+            puts(1, shortFilename & ", Warning: " & msg & "\n")
+        else
+            printf(1, shortFilename & "@%d, Warning: " & msg & "\n", line)
+        end if
+    end if
 end procedure
 
 
 global procedure ADD_CMD(integer chn, sequence cmd)
-	songs[songNum][chn] &= cmd
-	--? cmd
+    songs[songNum][chn] &= cmd
 end procedure
 
 
 -- Define a symbol with a given name and value
 global procedure define(sequence what, object val)
-	integer i
-	
-	i = find(what, defines[1])
-	if i >= 1 then
-		defines[2][i] = val
-	else
-		defines[1] = append(defines[1], what)
-		defines[2] = append(defines[2], val)
-	end if
+    integer i
+
+    i = find(what, defines[1])
+    if i >= 1 then
+        defines[2][i] = val
+    else
+        defines[1] = append(defines[1], what)
+        defines[2] = append(defines[2], val)
+    end if
 end procedure
 
 
 -- Check if a symbol with a given name is defined
 global function is_defined(sequence what)
-	if find(what, defines[1]) >= 1 then
-		return 1
-	end if
-	return 0
+    if find(what, defines[1]) >= 1 then
+        return 1
+    end if
+    return 0
 end function
 
 
 -- Return the absolute value of a
 global function abs(atom a)
-	if a < 0 then
-		return -a
-	end if
-	return a
+    if a < 0 then
+        return -a
+    end if
+    return a
 end function
 
 
 global function ceil2(atom a)
-	return -floor(-a)
+    return -floor(-a)
 end function
 
 
 global function round2(atom a)
-	if abs(a) - floor(abs(a)) > 0.5 then
-		return ceil2(a)
-	end if
-	return floor(a)
+    if abs(a) - floor(abs(a)) > 0.5 then
+        return ceil2(a)
+    end if
+    return floor(a)
 end function
 
 
 global function max(sequence s)
-	integer m
-	
-	m = s[1]
-	for i = 1 to length(s) do
-		if s[i] > m then
-			m = s[i]
-		end if
-	end for
-	
-	return m
+    integer m
+
+    m = s[1]
+    for i = 1 to length(s) do
+        if s[i] > m then
+            m = s[i]
+        end if
+    end for
+
+    return m
 end function
 
 
 global function min(sequence s)
-	integer m
-	
-	m = s[1]
-	for i = 1 to length(s) do
-		if s[i] < m then
-			m = s[i]
-		end if
-	end for
-	
-	return m
+    integer m
+
+    m = s[1]
+    for i = 1 to length(s) do
+        if s[i] < m then
+            m = s[i]
+        end if
+    end for
+
+    return m
 end function
 
 
 global function getch()
-	integer c
-	
-	c = -1
-	if fileDataPos <= length(fileData) then
-		c = fileData[fileDataPos]
-		fileDataPos += 1
-	end if
-	
-	return c
+    integer c
+
+    c = -1
+    if fileDataPos <= length(fileData) then
+        c = fileData[fileDataPos]
+        fileDataPos += 1
+    end if
+
+    return c
 end function
 
 
 -- Unget the last read character  
 global procedure ungetch()
-	if fileDataPos > 1 then
-		fileDataPos -= 1
-	end if
+    if fileDataPos > 1 then
+        fileDataPos -= 1
+    end if
 end procedure
 
 

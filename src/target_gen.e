@@ -1,3 +1,4 @@
+include assoc.e
 include globals.e
 include output.e
 include specs_sn76489.e
@@ -7,76 +8,76 @@ include vgm.e
 
 
 global procedure init_gen()
-	define("GEN", 1)
-	define("SMD", 1)
-	
-	set_channel_specs(specs_sn76489, 1, 1)	-- A,B,C,D
-	set_channel_specs(specs_ym2612,  1, 5)	-- E,F,G,H,I,J
+    define("GEN", 1)
+    define("SMD", 1)
 
-	activeChannels 		= repeat(0, length(supportedChannels))
+    set_channel_specs(specs_sn76489, 1, 1)	-- A,B,C,D
+    set_channel_specs(specs_ym2612,  1, 5)	-- E,F,G,H,I,J
 
-	maxTempo 		= 300
-	minVolume 		= 0
-	supportsPan 		= 1
-	maxLoopDepth 		= 2
-	supportsPAL 		= 1
-	adsrLen			= 5
-	adsrMax			= 63
-	minWavLength 		= 1
-	maxWavLength 		= 2097152 -- 2MB
-	minWavSample 		= 0
-	maxWavSample		= 255
+    activeChannels 		= repeat(0, length(supportedChannels))
+
+    maxTempo 		= 300
+    minVolume 		= 0
+    supportsPan 		= 1
+    maxLoopDepth 		= 2
+    supportsPAL 		= 1
+    adsrLen			= 5
+    adsrMax			= 63
+    minWavLength 		= 1
+    maxWavLength 		= 2097152 -- 2MB
+    minWavSample 		= 0
+    maxWavSample		= 255
 end procedure
 
 
 
 -- Output data suitable for the SEGA Genesis (Megadrive) playback library
 global procedure output_gen(sequence args)
-	atom factor
-	integer f, machineSpeed, tableSize, cbSize, songSize, patSize, numSongs
-	sequence freqTbl, oct1, fileEnding, s, e
-	
-	if args[1] = 1 then
-		fileEnding = ".vgm"
-	elsif args[1] = 2 then
-		fileEnding = ".vgz"
-	else
-		fileEnding = ".s"
-	end if
+    atom factor
+    integer f, machineSpeed, tableSize, cbSize, songSize, patSize
+    sequence freqTbl, oct1, fileEnding, s, e
 
-	-- Convert ADSR envelopes to the format used by the YM2612
-	for i = 1 to length(adsrs[2]) do
-		s = {0, 0, 0, 0}
-		e = adsrs[2][i][2]
-		s[1] = e[1]
-		s[2] = e[2]
-		s[3] = e[3]
-		s[4] = floor(e[5] / 2) + floor(xor_bits(e[4], 31) / 2) * #10
-		adsrs[2][i][2] = s
-	end for
-	
-	for i = 1 to length(mods[ASSOC_DATA]) do
-		s = mods[ASSOC_DATA][i][LIST_MAIN]
-		s[2] = s[2] * 8 + s[3]
-		mods[ASSOC_DATA][i][LIST_MAIN] = s[1..2]
-	end for
-	
-	for i = 1 to length(feedbackMacros[1]) do
-		feedbackMacros[ASSOC_DATA][i][LIST_MAIN] = (feedbackMacros[ASSOC_DATA][i][LIST_MAIN])*8
-		feedbackMacros[ASSOC_DATA][i][LIST_LOOP] = (feedbackMacros[ASSOC_DATA][i][LIST_LOOP])*8
-	end for
-	
-	numSongs = 0
-	for i = 1 to length(songs) do
-		if sequence(songs[i]) then
-			numSongs += 1
-		end if
-	end for
-	
-	if args[1] then
-		if numSongs = 1 then
-			write_vgm(shortFilename & fileEnding, 1, PSG_ENABLED, YM2151_DISABLED, YM2413_DISABLED, YM2612_ENABLED)
-		else
+    if args[1] = 1 then
+        fileEnding = ".vgm"
+    elsif args[1] = 2 then
+        fileEnding = ".vgz"
+    else
+        fileEnding = ".s"
+    end if
+
+    -- Convert ADSR envelopes to the format used by the YM2612
+    for i = 1 to length(adsrs[2]) do
+        s = {0, 0, 0, 0}
+        e = adsrs[2][i][2]
+        s[1] = e[1]
+        s[2] = e[2]
+        s[3] = e[3]
+        s[4] = floor(e[5] / 2) + floor(xor_bits(e[4], 31) / 2) * #10
+        adsrs[2][i][2] = s
+    end for
+
+    for i = 1 to length(mods[ASSOC_DATA]) do
+        s = mods[ASSOC_DATA][i][LIST_MAIN]
+        s[2] = s[2] * 8 + s[3]
+        mods[ASSOC_DATA][i][LIST_MAIN] = s[1..2]
+    end for
+
+    for i = 1 to length(feedbackMacros[1]) do
+        feedbackMacros[ASSOC_DATA][i][LIST_MAIN] = (feedbackMacros[ASSOC_DATA][i][LIST_MAIN])*8
+        feedbackMacros[ASSOC_DATA][i][LIST_LOOP] = (feedbackMacros[ASSOC_DATA][i][LIST_LOOP])*8
+    end for
+
+    integer numSongs = 0
+    for i = 1 to length(songs) do
+        if sequence(songs[i]) then
+            numSongs += 1
+        end if
+    end for
+
+    if args[1] then
+        if numSongs = 1 then
+            write_vgm(shortFilename & fileEnding, 1, PSG_ENABLED, YM2151_DISABLED, YM2413_DISABLED, YM2612_ENABLED)
+        else
 			for i = 1 to length(songs) do
 				if sequence(songs[i]) then
 					write_vgm(shortFilename & sprintf("_song%d", i) & fileEnding, i, PSG_ENABLED, YM2151_DISABLED, YM2413_DISABLED, YM2612_ENABLED)

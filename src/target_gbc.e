@@ -1,3 +1,4 @@
+include assoc.e
 include globals.e
 include output.e
 include specs_gbapu.e
@@ -5,79 +6,79 @@ include util.e
 
 
 global procedure init_gbc()
-	define("GBC", 1)
+    define("GBC", 1)
 
-	set_channel_specs(specs_gbapu, 1, 1)	-- A,B,C,D
+    set_channel_specs(specs_gbapu, 1, 1)	-- A,B,C,D
 
-	activeChannels 		= repeat(0, length(supportedChannels))
-	maxTempo 			= 300
-	minVolume 			= 0
-	supportsPan 		= 1
-	maxLoopDepth 		= 2
-	minWavLength		= 32
-	maxWavLength		= 32
-	minWavSample 		= 0
-	maxWavSample		= 15
+    activeChannels 		= repeat(0, length(supportedChannels))
+    maxTempo 			= 300
+    minVolume 			= 0
+    supportsPan 		= 1
+    maxLoopDepth 		= 2
+    minWavLength		= 32
+    maxWavLength		= 32
+    minWavSample 		= 0
+    maxWavSample		= 15
 end procedure
 
 
 -- Output data suitable for the Gameboy / Gameboy Color playback library (WLA-DX)
 global procedure output_gbc(sequence args)
-	atom factor,f2,r2,smallestDiff
-	integer f, tableSize, cbSize, songSize, wavSize, patSize, numSongs
-	sequence closest,s
+    atom factor,f2,r2,smallestDiff
+    integer f, tableSize, cbSize, songSize, wavSize, patSize
+    sequence closest
 
-	outFile = open(shortFilename & ".asm", "wb")
-	if outFile = -1 then
-		ERROR("Unable to open file: " & shortFilename & ".asm", -1)
-	end if
+    outFile = open(shortFilename & ".asm", "wb")
+    if outFile = -1 then
+        ERROR("Unable to open file: " & shortFilename & ".asm", -1)
+    end if
 
-	s = date()
-	printf(outFile, "; Written by XPMC at %02d:%02d:%02d on " & WEEKDAYS[s[7]] & " " & MONTHS[s[2]] & " %d, %d." & {13, 10, 13, 10},
-	       s[4..6] & {s[3], s[1] + 1900})
+    sequence s = date()
+    printf(outFile, "; Written by XPMC at %02d:%02d:%02d on " & WEEKDAYS[s[7]] & " " & MONTHS[s[2]] & " %d, %d." & {13, 10, 13, 10},
+        s[4..6] & {s[3], s[1] + 1900})
 
-	numSongs = 0
-	for i = 1 to length(songs) do
-		if sequence(songs[i]) then
-			numSongs += 1
-		end if
-	end for
-	
-	puts(outFile,
-	".IFDEF XPMP_MAKE_GBS" & CRLF & CRLF &
-	".MEMORYMAP" & CRLF &
-	"\tDEFAULTSLOT 1"  & CRLF &
-	"\tSLOTSIZE $4000"  & CRLF &
-	"\tSLOT 0 $0000"  & CRLF &
-	"\tSLOT 1 $4000"  & CRLF &
-	".ENDME"  & CRLF & CRLF)
-	puts(outFile,
-	".ROMBANKSIZE $4000"  & CRLF &
-	".ROMBANKS 2"  & CRLF &
-	".BANK 0 SLOT 0"  & CRLF &
-	".ORGA $00"  & CRLF & CRLF)
-	
-	puts(outFile,
-	".db \"GBS\"" & CRLF &
-	".db 1\t\t; Version" & CRLF &
-	sprintf(".db %d\t\t; Number of songs", numSongs) & CRLF &
-	".db 1\t\t; Start song" & CRLF &
-	".dw $0400\t; Load address" & CRLF &
-	".dw $0400\t; Init address" & CRLF &
-	".dw $0408\t; Play address" & CRLF &
-	".dw $fffe\t; Stack pointer" & CRLF &
-	".db 0" & CRLF &
-	".db 0" & CRLF)
-	
-	if length(songTitle) >= 32 then
-		puts(outFile, ".db \"" & songTitle[1..31] & "\", 0" & CRLF)
-	else
-		puts(outFile, ".db \"" & songTitle & "\"")
-		for i = 1 to 32 - length(songTitle) do
-			puts(outFile, ", 0")
-		end for
-		puts(outFile, CRLF)
-	end if
+    integer numSongs = 0
+    for i = 1 to length(songs) do
+        if sequence(songs[i]) then
+            numSongs += 1
+        end if
+    end for
+
+    puts(outFile,
+    ".IFDEF XPMP_MAKE_GBS" & CRLF & CRLF &
+    ".MEMORYMAP" & CRLF &
+    "\tDEFAULTSLOT 1"  & CRLF &
+    "\tSLOTSIZE $4000"  & CRLF &
+    "\tSLOT 0 $0000"  & CRLF &
+    "\tSLOT 1 $4000"  & CRLF &
+    ".ENDME"  & CRLF & CRLF)
+    puts(outFile,
+    ".ROMBANKSIZE $4000"  & CRLF &
+    ".ROMBANKS 2"  & CRLF &
+    ".BANK 0 SLOT 0"  & CRLF &
+    ".ORGA $00"  & CRLF & CRLF)
+
+    puts(outFile,
+    ".db \"GBS\"" & CRLF &
+    ".db 1\t\t; Version" & CRLF &
+    sprintf(".db %d\t\t; Number of songs", numSongs) & CRLF &
+    ".db 1\t\t; Start song" & CRLF &
+    ".dw $0400\t; Load address" & CRLF &
+    ".dw $0400\t; Init address" & CRLF &
+    ".dw $0408\t; Play address" & CRLF &
+    ".dw $fffe\t; Stack pointer" & CRLF &
+    ".db 0" & CRLF &
+    ".db 0" & CRLF)
+
+    if length(songTitle) >= 32 then
+        puts(outFile, ".db \"" & songTitle[1..31] & "\", 0" & CRLF)
+    else
+        puts(outFile, ".db \"" & songTitle & "\"")
+        for i = 1 to 32 - length(songTitle) do
+            puts(outFile, ", 0")
+        end for
+        puts(outFile, CRLF)
+    end if
 	if length(songComposer) >= 32 then
 		puts(outFile, ".db \"" & songComposer[1..31] & "\", 0" & CRLF)
 	else

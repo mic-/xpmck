@@ -1,61 +1,61 @@
-global constant
-	ASSOC_KEY = 1,
-	ASSOC_DATA = 2,
-	ASSOC_REF = 3,
-	ASSOC_EXTRA = 4
-	
-	
+export enum
+    ASSOC_KEY = 1,
+    ASSOC_DATA = 2,
+    ASSOC_REF = 3,
+    ASSOC_EXTRA = 4
+
+
 global function assoc_create()
-	return {{}, {}, {}, {}}
+    return {{}, {}, {}, {}}
 end function
 
 
-global function assoc_append(sequence l, object key, object data)
-	l[ASSOC_KEY] = append(l[ASSOC_KEY], key)
-	l[ASSOC_DATA] = append(l[ASSOC_DATA], data)
-	l[ASSOC_REF] &= 0
-	l[ASSOC_EXTRA] = append(l[ASSOC_EXTRA], {})
-	return l
+global function assoc_append(sequence arr, object key, object data)
+    arr[ASSOC_KEY] = append(arr[ASSOC_KEY], key)
+    arr[ASSOC_DATA] = append(arr[ASSOC_DATA], data)
+    arr[ASSOC_REF] &= 0
+    arr[ASSOC_EXTRA] = append(arr[ASSOC_EXTRA], {})
+    return arr
 end function
 
-global function assoc_find_key(sequence l, object key)
-	return find(key, l[ASSOC_KEY])
-end function
-
-
-global function assoc_get_data(sequence l, object key)
-	return l[ASSOC_DATA][assoc_find_key(l, key)]
+global function assoc_find_key(sequence arr, object key)
+    return find(key, arr[ASSOC_KEY])
 end function
 
 
-global function assoc_insert_extra_data(sequence l, object key, object data)
-	l[ASSOC_EXTRA][assoc_find_key(l, key)] &= data
-	return l
+global function assoc_get_data(sequence arr, object key)
+    return arr[ASSOC_DATA][assoc_find_key(arr, key)]
 end function
 
 
-global function assoc_get_extra_data(sequence l, object key)
-	return l[ASSOC_EXTRA][assoc_find_key(l, key)]
+global function assoc_insert_extra_data(sequence arr, object key, object data)
+    arr[ASSOC_EXTRA][assoc_find_key(arr, key)] &= data
+    return arr
 end function
 
 
-global function assoc_reference(sequence l, object key)
-	l[ASSOC_REF][assoc_find_key(l, key)] = 1
-	return l
+global function assoc_get_extra_data(sequence arr, object key)
+    return arr[ASSOC_EXTRA][assoc_find_key(arr, key)]
 end function
 
 
-global function assoc_is_referenced(sequence l, object key)
-	return l[ASSOC_REF][assoc_find_key(l, key)]
+global function assoc_reference(sequence arr, object key)
+    arr[ASSOC_REF][assoc_find_key(arr, key)] = 1
+    return arr
 end function
 
 
-global function assoc_get_keys(sequence l)
-	return l[ASSOC_KEY]
+global function assoc_is_referenced(sequence arr, object key)
+    return arr[ASSOC_REF][assoc_find_key(arr, key)]
 end function
 
 
-global function assoc_get_references(sequence l)
-	return l[ASSOC_REF]
+global function assoc_get_keys(sequence arr)
+    return arr[ASSOC_KEY]
+end function
+
+
+global function assoc_get_references(sequence arr)
+    return arr[ASSOC_REF]
 end function
 
